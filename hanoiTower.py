@@ -44,6 +44,12 @@ def print_pegs(pegs):
     print(f"{'A':^10}{'B':^10}{'C':^10}\n{'-' * 30}")
 
 
+def print_move_count(n):
+    """Print the total number of moves required"""
+    total_moves = (1 << n) - 1  # 2^n - 1
+    print(f"\nTotal moves required: {total_moves}")
+
+
 if __name__ == "__main__":
     num_disks = 4  # Reduced for demonstration (use 10 for full puzzle)
     pegs = [[i for i in range(num_disks, 0, -1)], [], []]
