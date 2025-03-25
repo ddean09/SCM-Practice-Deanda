@@ -1,70 +1,54 @@
-
+# hanoi_tower_visual.py
 """
-Tower of Hanoi Solver - Iterative Approach
-Solves the puzzle for 10 disks without recursion
+Tower of Hanoi Solver with Visualization
+Recursive solution that shows peg states after each move
 """
 
 
-def hanoi_iterative(n):
+def hanoi(n, source, target, auxiliary, pegs):
     """
-    Solves Tower of Hanoi iteratively using stack simulation
+    Recursive solution with visualization
 
     Args:
-        n: Number of disks
+        n: Number of disks to move
+        source: Source peg index (0, 1, or 2)
+        target: Target peg index
+        auxiliary: Auxiliary peg index
+        pegs: Current state of all pegs (list of lists)
     """
-    # Initialize stacks for each peg
-    pegs = {
-        'A': list(range(n, 0, -1)),
-        'B': [],
-        'C': []
-    }
+    if n > 0:
+        # Step 1: Move n-1 disks from source to auxiliary
+        hanoi(n - 1, source, auxiliary, target, pegs)
 
-    # Determine total moves needed (2^n - 1)
-    total_moves = (1 << n) - 1
-
-    # If even number of disks, swap target and auxiliary
-    if n % 2 == 0:
-        target, auxiliary = 'B', 'C'
-    else:
-        target, auxiliary = 'C', 'B'
-
-    for move in range(1, total_moves + 1):
-        if move % 3 == 1:
-            # Legal move between A and target peg
-            move_disks('A', target, pegs)
-        elif move % 3 == 2:
-            # Legal move between A and auxiliary peg
-            move_disks('A', auxiliary, pegs)
-        elif move % 3 == 0:
-            # Legal move between auxiliary and target peg
-            move_disks(auxiliary, target, pegs)
-
-
-def move_disks(source, target, pegs):
-    """Perform legal move between two pegs"""
-    if not pegs[source]:
-        # Source peg is empty, move from target to source
-        disk = pegs[target].pop()
-        pegs[source].append(disk)
-        print(f"Move disk {disk} from {target} to {source}")
-    elif not pegs[target]:
-        # Target peg is empty, move from source to target
+        # Step 2: Move the nth disk from source to target
         disk = pegs[source].pop()
         pegs[target].append(disk)
-        print(f"Move disk {disk} from {source} to {target}")
-    else:
-        # Compare top disks
-        if pegs[source][-1] < pegs[target][-1]:
-            disk = pegs[source].pop()
-            pegs[target].append(disk)
-            print(f"Move disk {disk} from {source} to {target}")
-        else:
-            disk = pegs[target].pop()
-            pegs[source].append(disk)
-            print(f"Move disk {disk} from {target} to {source}")
+        print(f"Move disk {disk} from {chr(65 + source)} to {chr(65 + target)}")
+        print_pegs(pegs)
+
+        # Step 3: Move n-1 disks from auxiliary to target
+        hanoi(n - 1, auxiliary, target, source, pegs)
+
+
+def print_pegs(pegs):
+    """Visualize the current state of all pegs"""
+    max_height = max(len(peg) for peg in pegs)
+
+    for level in range(max_height - 1, -1, -1):
+        for peg in pegs:
+            if level < len(peg):
+                print(f"{'■' * peg[level]:^10}", end="")
+            else:
+                print(f"{'|':^10}", end="")
+        print()
+    print(f"{'A':^10}{'B':^10}{'C':^10}\n{'-' * 30}")
 
 
 if __name__ == "__main__":
-    num_disks = 10
-    print(f"Solving Tower of Hanoi with {num_disks} disks (iterative solution):")
-    hanoi_iterative(num_disks)
+    num_disks = 4  # Reduced for demonstration (use 10 for full puzzle)
+    pegs = [[i for i in range(num_disks, 0, -1)], [], []]
+
+    print(f"Initial state (Tower of Hanoi with {num_disks} disks):")
+    print_pegs(pegs)
+    print("\nSolution Steps:")
+    hanoi(num_disks, 0, 2, 1, pegs)
